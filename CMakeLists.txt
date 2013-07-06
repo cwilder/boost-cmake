@@ -39,7 +39,6 @@ set(SELF_LDFLAGS "-L${TOOL_TARGET_INSTALL_PREFIX}/lib")
 set(CONFIG_ADD_OPTIONS "--prefix=\"${TOOL_TARGET_INSTALL_PREFIX}\";cxxflags=\"${SELF_CPPFLAGS};-fPIC;-g\";cflags=\"${SELF_CFLAGS};-fPIC;-g\";include=\"${TOOL_TARGET_INSTALL_PREFIX}/include\";library-path=\"${TOOL_TARGET_INSTALL_PREFIX}/lib\"")
 	if(DEFINED CMAKE_TOOLCHAIN_FILE)
 		set(CONFIG_ADD_OPTIONS "${CONFIG_ADD_OPTIONS};--without-context;--without-graph;--without-graph_parallel;--without-mpi;--without-python;--without-wave;variant=release;threading=multi;link=shared;runtime-link=shared;")
-		message(${CONFIG_ADD_OPTIONS})
 		add_custom_command(
 			OUTPUT ${TOOL_TARGET_BUILD_OUTPUT}
 			COMMAND test -e ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_TARGET_SOURCE} || wget ${TOOL_TARGET_BASE_URL}/${TOOL_TARGET_SOURCE} -O ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_TARGET_SOURCE}
@@ -47,7 +46,7 @@ set(CONFIG_ADD_OPTIONS "--prefix=\"${TOOL_TARGET_INSTALL_PREFIX}\";cxxflags=\"${
 			COMMAND test -e ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_TARGET_PATCH} && cd ${TOOL_TARGET_DIR} && patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_TARGET_PATCH} && echo "use patch file: ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_TARGET_PATCH}" || echo "no patch file"
 			COMMAND echo "using gcc : arm : ${target_platform}-g++ \;" >> ${TOOL_TARGET_DIR}/tools/build/v2/user-config.jam
 			COMMAND cd ${TOOL_TARGET_DIR} && ./bootstrap.sh
-			COMMAND cd ${TOOL_TARGET_DIR} && ./b2 ${CONFIG_ADD_OPTIONS} install
+			COMMAND cd ${TOOL_TARGET_DIR} && ./b2 ${CONFIG_ADD_OPTIONS} install || echo "!!! failed updating"
 			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 			COMMENT ${TOOL_TARGET_COMMENT}
 		)
@@ -58,7 +57,7 @@ set(CONFIG_ADD_OPTIONS "--prefix=\"${TOOL_TARGET_INSTALL_PREFIX}\";cxxflags=\"${
 			COMMAND tar -xzvf ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_TARGET_SOURCE}
 			COMMAND test -e ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_TARGET_PATCH} && cd ${TOOL_TARGET_DIR} && patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_TARGET_PATCH} && echo "use patch file: ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_TARGET_PATCH}" || echo "no patch file"
 			COMMAND cd ${TOOL_TARGET_DIR} && ./bootstrap.sh
-			COMMAND cd ${TOOL_TARGET_DIR} && ./b2 ${CONFIG_ADD_OPTIONS} install
+			COMMAND cd ${TOOL_TARGET_DIR} && ./b2 ${CONFIG_ADD_OPTIONS} install || echo "!!! failed updating"
 			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 			COMMENT ${TOOL_TARGET_COMMENT}
 		)
